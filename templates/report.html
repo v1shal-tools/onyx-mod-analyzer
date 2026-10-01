@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Onyx Mod Analyzer Report</title>
+<style>
+:root{--bg:#0a0c0f;--pn:#12161b;--p2:#181e25;--bd:#242d37;--tx:#e7ecf1;--mu:#8795a3;--ac:#4cc9f0;--ok:#3ddc97;--un:#f5c451;--ob:#c58af9;--re:#ff9f43;--su:#ff6b6b;--cr:#ff2e5b;color-scheme:dark}
+@media(prefers-color-scheme:light){:root:not([data-t=dark]){--bg:#f3f5f8;--pn:#fff;--p2:#f0f3f7;--bd:#d8dfe7;--tx:#14202b;--mu:#5d6b79;--ac:#0879a8;--ok:#0a8f5c;--un:#a87400;--ob:#8a3fd1;--re:#c4620a;--su:#d13b3b;--cr:#c8103f;color-scheme:light}}
+:root[data-t=light]{--bg:#f3f5f8;--pn:#fff;--p2:#f0f3f7;--bd:#d8dfe7;--tx:#14202b;--mu:#5d6b79;--ac:#0879a8;--ok:#0a8f5c;--un:#a87400;--ob:#8a3fd1;--re:#c4620a;--su:#d13b3b;--cr:#c8103f;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 "Segoe UI",system-ui,Arial,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:1240px;margin:0 auto;padding:20px 16px 60px}
+h1{margin:0;font-size:22px;letter-spacing:.35em}h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin:28px 0 10px}
+.top{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}.sub{color:var(--mu);font-size:12px}
+button,input{font:inherit;color:inherit}button{background:var(--p2);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;cursor:pointer}button:hover{border-color:var(--ac)}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.card{background:var(--pn);border:1px solid var(--bd);border-radius:14px;padding:16px}
+.hero{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;margin-top:16px}
+.hl{font-size:18px;font-weight:600;margin:0 0 4px}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:14px}
+.kpi{background:var(--p2);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;cursor:pointer;text-align:left}.kpi b{display:block;font-size:22px}.kpi span{font-size:11px;letter-spacing:.08em;color:var(--mu)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:12px}.bar i{display:block;height:8px;border-radius:4px;background:var(--ac)}.bar em{flex:1;background:var(--p2);border-radius:4px;font-style:normal}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}.tools input{flex:1;min-width:200px;background:var(--pn);border:1px solid var(--bd);border-radius:8px;padding:7px 10px}
+.chip{border-radius:999px;padding:3px 11px;font-size:12px}.chip[aria-pressed=true]{background:var(--ac);color:#04141b;border-color:var(--ac)}
+.tw{overflow-x:auto;border:1px solid var(--bd);border-radius:12px;background:var(--pn)}table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--bd);vertical-align:top}th{font-size:11px;letter-spacing:.08em;color:var(--mu);cursor:pointer;white-space:nowrap;user-select:none}
+tr.r{cursor:pointer}tr.r:hover{background:var(--p2)}tr.d>td{background:var(--p2);padding:14px 16px}
+.b{display:inline-block;border-radius:6px;padding:1px 8px;font-size:11px;font-weight:700;letter-spacing:.05em;border:1px solid currentColor}
+.mono{font-family:Consolas,"Cascadia Mono",monospace;font-size:12px;word-break:break-all}.mu{color:var(--mu)}
+.sc{display:inline-block;width:70px;height:6px;background:var(--bd);border-radius:3px;vertical-align:middle;margin-right:6px}.sc i{display:block;height:6px;border-radius:3px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:6px 22px;margin-bottom:12px}.g div>span{display:block;font-size:11px;color:var(--mu);letter-spacing:.06em;text-transform:uppercase}
+.ev{border-left:3px solid var(--bd);padding:4px 10px;margin:6px 0;background:var(--pn);border-radius:0 8px 8px 0}
+a{color:var(--ac)}.list .ev{margin:8px 0}.foot{margin-top:34px;color:var(--mu);font-size:12px}
+@media(max-width:760px){.hero,.two{grid-template-columns:1fr}}
+@media print{.tools,.top button,.kpis{display:none}tr.d{display:table-row!important}body{background:#fff}}
+
+#err{display:none;margin:16px 0;padding:14px 16px;border:1px solid var(--cr);border-left:4px solid var(--cr);border-radius:10px;background:var(--pn)}
+#err b{color:var(--cr)}#err pre{white-space:pre-wrap;word-break:break-word;margin:8px 0 0;font:12px/1.5 Consolas,monospace;color:var(--tx)}
+.logo{display:flex;align-items:center;gap:12px}.logo i{display:inline-block;width:14px;height:14px;background:var(--ac);transform:rotate(45deg);border-radius:3px}
+.hl.bad{color:var(--cr)}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><div class="logo"><i></i><div><h1>ONYX</h1><div class="sub" id="meta"></div></div></div>
+<div><button id="th" title="Cycle theme">Theme</button> <button id="csv">CSV</button> <button id="jsn">JSON</button> <button onclick="print()">Print</button></div></div>
+<div id="err" role="alert"></div>
+<div id="app"><p class="mu" style="padding:30px 0">Loading report...</p></div>
+<noscript><p>This report needs JavaScript enabled.</p></noscript>
+</main>
+<!-- Data is embedded as Base64(UTF-8 JSON) so no character in a mod can ever break the page. -->
+<script id="onyx-data" type="text/plain">__ONYX_DATA_B64__</script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function showErr(title,detail){const b=$('#err');if(!b)return;b.style.display='block';b.innerHTML='<b>'+E(title)+'</b><pre>'+E(detail)+'</pre><p class="mu">Send this message to the Onyx developer. The JSON report saved next to this file still contains all results.</p>'}
+window.addEventListener('error',e=>showErr('Report script error',(e.message||'')+(e.error&&e.error.stack?'\n'+e.error.stack:'')));
+
+/* ---------- load + normalise data ---------- */
+const A=x=>Array.isArray(x)?x:x==null?[]:(typeof x==='object'&&Array.isArray(x.value))?x.value:[x];   /* also unwraps PowerShell's {"value":[..],"Count":n} quirk */
+const num=(v,d)=>{v=Number(v);return isFinite(v)?v:(d||0)};
+const ST=['CRITICAL','SUSPICIOUS','REVIEW','OBFUSCATED','UNKNOWN','VERIFIED'];
+const SC={CRITICAL:'--cr',SUSPICIOUS:'--su',REVIEW:'--re',OBFUSCATED:'--ob',UNKNOWN:'--un',VERIFIED:'--ok'};
+const VC={critical:'--cr',high:'--su',medium:'--re',low:'--un',info:'--mu'};
+const vc=s=>VC[String(s).toLowerCase()]||'--mu';
+function load(){
+  const raw=($('#onyx-data').textContent||'').trim();
+  if(!raw||raw.indexOf('__ONYX_'+'DATA')===0)throw new Error('No data was embedded in this report file.');
+  const bin=atob(raw),u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
+  const txt=new TextDecoder('utf-8').decode(u8);
+  try{return JSON.parse(txt)}catch(e){return(0,eval)('('+txt+')')}   /* eval fallback tolerates NaN/Infinity from old PowerShell */
+}
+function norm(D){
+  D=D||{};
+  D.Mods=A(D.Mods).map(m=>{m=Object.assign({File:'?',RelPath:'',Path:'',SHA1:'',SHA256:'',Status:'UNKNOWN',Source:'',SourceUrl:'',Created:'',Modified:'',VerifiedBy:'',Verified:false,Disabled:false,Modrinth:null,Meta:null,Stats:null},m);
+    m.Score=num(m.Score);m.SizeBytes=num(m.SizeBytes);if(ST.indexOf(m.Status)<0)m.Status='UNKNOWN';
+    m.Source=String(m.Source||'');m.File=String(m.File||'?');m.RelPath=String(m.RelPath||m.File);
+    m.Evidence=A(m.Evidence).map(e=>{e=Object.assign({Sev:'low',Category:'',Rule:'',Detail:'',Where:'',Count:1,Weight:0,Disc:false},e);e.Weight=num(e.Weight);e.Count=num(e.Count,1);e.Locations=A(e.Locations);return e});
+    m.Urls=A(m.Urls);m.NestedJars=A(m.NestedJars);return m});
+  D.Summary=Object.assign({SecurityScore:0,Grade:'?',RiskLevel:'',Headline:'',Total:D.Mods.length,TotalBytes:0},D.Summary||{});
+  D.Summary.SecurityScore=num(D.Summary.SecurityScore);D.Summary.Total=num(D.Summary.Total,D.Mods.length);D.Summary.TotalBytes=num(D.Summary.TotalBytes);
+  D.Meta=Object.assign({Version:'',Target:'',Timestamp:'',Depth:'',DurationSec:'',Host:'',PowerShell:'',RuleCount:0,ModrinthState:'',NativeHelper:true},D.Meta||{});
+  D.Folder=A(D.Folder);D.Cross=A(D.Cross);D.Jvm=A(D.Jvm);
+  return D}
+
+let D=null;
+try{D=norm(load())}catch(e){showErr('Could not load the report data',e&&e.stack?e.stack:String(e));$('#app').innerHTML=''}
+if(D){try{boot()}catch(e){showErr('Could not draw the report',e&&e.stack?e.stack:String(e));$('#app').innerHTML=''}}
+
+function boot(){
+const badge=(t,v)=>`<span class="b" style="color:var(${v})">${E(t)}</span>`;
+const size=b=>b>=1048576?(b/1048576).toFixed(1)+' MB':b>=1024?Math.round(b/1024)+' KB':b+' B';
+const S=D.Summary,M=D.Meta,mods=D.Mods,cnt=k=>mods.filter(m=>m.Status===k).length;
+let sel=new Set(),q='',sk='rank',sd=1,open=new Set();
+const rank=m=>ST.indexOf(m.Status);
+$('#meta').textContent=`v${M.Version} | ${M.Target} | ${String(M.Timestamp).replace('T',' ')} | ${M.Depth} scan | ${M.DurationSec}s | ${M.Host}`;
+function ring(v,c){const r=54,L=2*Math.PI*r;return `<svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="Score ${v} of 100"><circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--bd)" stroke-width="12"/><circle cx="70" cy="70" r="${r}" fill="none" stroke="var(${c})" stroke-width="12" stroke-linecap="round" stroke-dasharray="${Math.max(0,Math.min(100,v))/100*L} ${L}" transform="rotate(-90 70 70)"/><text x="70" y="68" text-anchor="middle" font-size="34" font-weight="700" fill="var(--tx)">${v}</text><text x="70" y="90" text-anchor="middle" font-size="12" fill="var(--mu)">GRADE ${E(S.Grade)}</text></svg>`}
+function donut(){const r=42,L=2*Math.PI*r;let o=0,t=Math.max(1,mods.length),p='';ST.forEach(k=>{const n=cnt(k);if(!n)return;const d=n/t*L;p+=`<circle cx="60" cy="60" r="${r}" fill="none" stroke="var(${SC[k]})" stroke-width="16" stroke-dasharray="${d} ${L-d}" stroke-dashoffset="${-o}" transform="rotate(-90 60 60)"><title>${k}: ${n}</title></circle>`;o+=d});return `<svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Status distribution"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--bd)" stroke-width="16"/>${p}<text x="60" y="66" text-anchor="middle" font-size="20" font-weight="700" fill="var(--tx)">${mods.length}</text></svg>`}
+function cats(){const c={};mods.forEach(m=>{new Set(m.Evidence.filter(e=>e.Weight>0).map(e=>e.Category)).forEach(k=>c[k]=(c[k]||0)+1)});const a=Object.entries(c).sort((x,y)=>y[1]-x[1]).slice(0,8),mx=a.length?a[0][1]:1;return a.length?a.map(([k,n])=>`<div class="bar"><span style="width:170px">${E(k)}</span><em><i style="width:${n/mx*100}%"></i></em><b>${n}</b></div>`).join(''):'<p class="mu">No findings in any category.</p>'}
+function prio(){const l=[];mods.forEach(m=>m.Evidence.forEach(e=>{const s=String(e.Sev).toLowerCase();if(s==='critical'||s==='high')l.push({m,e})}));l.sort((a,b)=>b.e.Weight-a.e.Weight);return l.length?l.slice(0,12).map(x=>`<div class="ev" style="border-color:var(${vc(x.e.Sev)})">${badge(String(x.e.Sev).toUpperCase(),vc(x.e.Sev))} <b>${E(x.e.Rule)}</b> in <a href="#" data-go="${E(x.m.SHA1||x.m.File)}">${E(x.m.File)}</a><div class="mu">${E(x.e.Detail)}</div></div>`).join(''):'<p class="mu">No critical or high-severity findings.</p>'}
+const mono='text-transform:none;font-size:12px;color:var(--tx)';
+function det(m){const mr=m.Modrinth,me=m.Meta,g=(k,v)=>v?`<div><span>${k}</span>${v}</div>`:'';
+const ev=m.Evidence.length?m.Evidence.map(e=>`<div class="ev" style="border-color:var(${vc(e.Sev)})">${badge(e.Sev,vc(e.Sev))} <b>${E(e.Rule)}</b> <span class="mu">${E(e.Category)} | ${E(e.Where)}${e.Count>1?' | x'+e.Count:''}${m.Verified&&e.Disc?' | discounted (verified)':''}</span><div>${E(e.Detail)}</div>${e.Locations.length?`<div class="mono mu">${e.Locations.map(E).join('<br>')}</div>`:''}</div>`).join(''):'<p class="mu">No findings.</p>';
+return `<div class="g">${g('Path',`<span class="mono" style="${mono}">${E(m.Path)}</span>`)}${g('SHA-1',`<span class="mono" style="${mono}">${E(m.SHA1)}</span> <button data-cp="${E(m.SHA1)}">Copy</button>`)}${g('SHA-256',`<span class="mono" style="${mono}">${E(m.SHA256)}</span>`)}${g('Verified',m.Verified?E(m.VerifiedBy)+(mr?` - <a href="${E(mr.Url)}" target="_blank" rel="noopener noreferrer">${E(mr.Title||mr.Project)} ${E(mr.Version)}</a>`:''):'Not verified')}${g('Declared mod',me?E(`${me.Name||me.Id} (${me.Id}) ${me.Version} [${me.Loader}] ${me.Authors||''}`):'')}${g('Origin',E(m.Source)+(m.SourceUrl?`<div class="mono mu">${E(m.SourceUrl)}</div>`:''))}${g('Created / modified',E((m.Created||'')+'  /  '+(m.Modified||'')))}${g('Classes / entries',m.Stats?`${E(m.Stats.Classes)} / ${E(m.Stats.Entries)} | short ${E(m.Stats.ShortPct)}% | look-alike ${E(m.Stats.ConfusionPct)}% | non-ASCII ${E(m.Stats.UnicodePct)}%`:'')}${g('External hosts',m.Urls.length?`<span class="mono">${m.Urls.map(E).join(', ')}</span>`:'')}${g('Nested jars',m.NestedJars.length?`<span class="mono">${m.NestedJars.map(n=>E(n.Path)).join('<br>')}</span>`:'')}</div>${ev}${m.SHA256?`<p><a href="https://www.virustotal.com/gui/file/${E(m.SHA256)}" target="_blank" rel="noopener noreferrer">Look up on VirusTotal</a> <span class="mu">(opens an external site)</span></p>`:''}`}
+function rows(){let l=mods.filter(m=>(!sel.size||sel.has(m.Status))&&(!q||(m.File+' '+m.SHA1+' '+(m.Meta&&m.Meta.Id||'')+' '+m.Source+' '+m.Evidence.map(e=>e.Rule).join(' ')).toLowerCase().includes(q)));
+const key={rank:m=>rank(m)*1000-m.Score,score:m=>-m.Score,file:m=>m.File.toLowerCase(),size:m=>m.SizeBytes,src:m=>m.Source.toLowerCase(),n:m=>-m.Evidence.filter(e=>e.Weight>0).length}[sk];
+l.sort((a,b)=>{const x=key(a),y=key(b);return(x<y?-1:x>y?1:0)*sd});
+return l.length?l.map(m=>{const id=m.SHA1||m.File,o=open.has(id),n=m.Evidence.filter(e=>e.Weight>0).length;const sub=m.Modrinth&&m.Modrinth.Title?m.Modrinth.Title+' '+m.Modrinth.Version:m.Meta?(m.Meta.Name||m.Meta.Id)+' '+m.Meta.Version:m.RelPath!==m.File?m.RelPath:'';return `<tr class="r" data-id="${E(id)}" tabindex="0" aria-expanded="${o}"><td>${badge(m.Status,SC[m.Status])}</td><td><span class="sc"><i style="width:${m.Score}%;background:var(${SC[m.Status]})"></i></span>${m.Score}</td><td><b>${E(m.File)}</b>${m.Disabled?' <span class="mu">(disabled)</span>':''}<div class="mu">${E(sub)}</div></td><td>${E(m.Source)}</td><td>${size(m.SizeBytes)}</td><td>${n||'<span class="mu">0</span>'}</td></tr>${o?`<tr class="d"><td colspan="6">${det(m)}</td></tr>`:''}`}).join(''):'<tr><td colspan="6" class="mu">No files match the current filters.</td></tr>'}
+function sect(t,l,f){return l.length?`<h2>${t}</h2><div class="list">${l.map(f).join('')}</div>`:''}
+function page(){
+const sc=S.SecurityScore>=90?'--ok':S.SecurityScore>=75?'--un':S.SecurityScore>=50?'--re':'--cr';
+$('#app').innerHTML=`<section class="card hero">${ring(S.SecurityScore,sc)}<div><p class="hl">${E(S.Headline)}</p><div class="sub">Risk level ${E(S.RiskLevel)} | ${S.Total} file(s), ${size(S.TotalBytes)} | Modrinth: ${E(M.ModrinthState)}${M.NativeHelper?'':' | reduced-accuracy mode'}</div><div class="kpis">${ST.map(k=>`<button class="kpi" data-f="${k}" aria-pressed="${sel.has(k)}"><b style="color:var(${SC[k]})">${cnt(k)}</b><span>${k}</span></button>`).join('')}</div></div></section>
+<div class="two" style="margin-top:14px"><section class="card"><h2 style="margin-top:0">Status distribution</h2><div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">${donut()}<div>${ST.map(k=>`<div><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(${SC[k]})"></i> ${k} <b>${cnt(k)}</b></div>`).join('')}</div></div></section><section class="card"><h2 style="margin-top:0">Finding categories (files affected)</h2>${cats()}</section></div>
+<h2>Priority findings</h2><div class="card">${prio()}</div>
+<h2>All files</h2><div class="tools"><input id="q" type="search" placeholder="Search name, hash, mod id, source, rule...  ( / )" aria-label="Search files" value="${E(q)}"><button id="ex">Expand / collapse all</button></div>
+<div class="tw"><table><thead><tr><th data-s="rank">STATUS</th><th data-s="score">RISK</th><th data-s="file">FILE</th><th data-s="src">SOURCE</th><th data-s="size">SIZE</th><th data-s="n">FINDINGS</th></tr></thead><tbody id="tb">${rows()}</tbody></table></div>
+${sect('Folder issues',D.Folder,f=>`<div class="ev" style="border-color:var(${vc(f.Sev)})">${badge(f.Sev,vc(f.Sev))} <b>${E(f.Title)}</b><div>${E(f.Detail)}</div><div class="mono mu">${E(f.File)}</div></div>`)}
+${sect('Cross-file checks',D.Cross,f=>`<div class="ev" style="border-color:var(${vc(f.Sev)})">${badge(f.Sev,vc(f.Sev))} <b>${E(f.Title)}</b><div>${E(f.Detail)}</div></div>`)}
+<h2>Running Minecraft JVM</h2>${D.Jvm.length?D.Jvm.map(j=>`<div class="card" style="margin-bottom:10px">${badge(j.IssueCount?j.IssueCount+' indicator(s)':'clean',j.IssueCount?'--su':'--ok')} <b>PID ${E(j.PID)}</b> <span class="mu">${E(j.Name)} | started ${E(j.Started||'?')} | ${E(j.GameDir)}</span>${[...A(j.AgentFlags),...A(j.RiskyFlags)].map(f=>`<div class="mono" style="color:var(--re)">${E(f)}</div>`).join('')}${A(j.AgentFiles).map(f=>`<div class="mono mu">agent file ${E(f.Path)} SHA-1 ${E(f.SHA1)}</div>`).join('')}${A(j.TempModules).map(f=>`<div class="mono" style="color:var(--re)">DLL: ${E(f)}</div>`).join('')}<details><summary class="mu">Command line</summary><div class="mono">${E(j.CommandLine)}</div></details></div>`).join(''):'<p class="mu">No Minecraft Java process was running during the scan, so runtime checks were skipped. Run the scan while the game is open for JVM agent and timeline checks.</p>'}
+<div class="foot"><b>How to read this.</b> VERIFIED: the file's SHA-1 matches a Modrinth release. UNKNOWN: not in the database and nothing suspicious found (private, CurseForge or GitHub mods look like this). OBFUSCATED: only obfuscation traits. REVIEW / SUSPICIOUS / CRITICAL: rising weight of indicators (cheat-module names, dropper or stealer behaviour, disguised binaries, webhooks, agents). Indicators are evidence for a human decision, not proof; legitimate mods can trip individual rules. Scan of ${E(M.RuleCount)} rules, ${E(M.Depth)} depth, PowerShell ${E(M.PowerShell)}.</div>`;
+bind()}
+function refresh(){$('#tb').innerHTML=rows()}
+function bind(){
+$('#q').oninput=e=>{q=e.target.value.toLowerCase();refresh()};
+$('#ex').onclick=()=>{const ids=mods.map(m=>m.SHA1||m.File);open=open.size?new Set():new Set(ids);refresh()};
+document.querySelectorAll('.kpi').forEach(b=>b.onclick=()=>{const k=b.dataset.f;sel.has(k)?sel.delete(k):sel.add(k);b.setAttribute('aria-pressed',sel.has(k));refresh()});
+document.querySelectorAll('th[data-s]').forEach(t=>t.onclick=()=>{const k=t.dataset.s;sd=sk===k?-sd:1;sk=k;refresh()});
+$('#tb').onclick=e=>{const c=e.target.closest('[data-cp]');if(c){navigator.clipboard&&navigator.clipboard.writeText(c.dataset.cp);c.textContent='Copied';return}if(e.target.closest('a'))return;const r=e.target.closest('tr.r');if(!r)return;const id=r.dataset.id;open.has(id)?open.delete(id):open.add(id);refresh()};
+$('#tb').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){const r=e.target.closest('tr.r');if(r){e.preventDefault();r.click()}}};
+document.querySelectorAll('[data-go]').forEach(a=>a.onclick=e=>{e.preventDefault();open.add(a.dataset.go);q='';$('#q').value='';refresh();const r=[...document.querySelectorAll('tr.r')].find(x=>x.dataset.id===a.dataset.go);r&&r.scrollIntoView({block:'center'})})}
+function dl(n,t,mime){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:mime}));a.download=n;a.click()}
+$('#jsn').onclick=()=>dl('onyx-report.json',JSON.stringify(D,null,2),'application/json');
+$('#csv').onclick=()=>{const c=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';dl('onyx-report.csv',['Status,Score,File,SizeBytes,SHA1,Source,Verified,Findings'].concat(mods.map(m=>[m.Status,m.Score,m.File,m.SizeBytes,m.SHA1,m.Source,m.VerifiedBy,m.Evidence.filter(e=>e.Weight>0).map(e=>e.Rule).join('; ')].map(c).join(','))).join('\n'),'text/csv')};
+const themes=['auto','dark','light'];let ti=0;try{ti=themes.indexOf(localStorage.getItem('onyx-t'))}catch(e){}if(ti<0)ti=0;
+const setT=()=>{const t=themes[ti];t==='auto'?document.documentElement.removeAttribute('data-t'):document.documentElement.setAttribute('data-t',t);$('#th').textContent='Theme: '+t;try{localStorage.setItem('onyx-t',t)}catch(e){}};
+$('#th').onclick=()=>{ti=(ti+1)%3;setT()};setT();
+document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();$('#q').focus()}});
+page()}
+</script>
+</body>
+</html>

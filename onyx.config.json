@@ -1,0 +1,14 @@
+{
+  "name": "Onyx Mod Analyzer",
+  "version": "2.1.0",
+  "trustedDomains": [],
+  "allowlistSha1": [],
+  "ignoreTerms": [],
+  "extraTerms": [
+    {
+      "term": "ExampleCheatName",
+      "category": "Custom rule",
+      "severity": "high"
+    }
+  ]
+}
