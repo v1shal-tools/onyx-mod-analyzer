@@ -1,15 +1,4 @@
 #Requires -Version 5.1
-<#
-  ONYX MOD ANALYZER v2.1.0
-  Windows PowerShell 5.1+ (also runs on PowerShell 7)
-  Defensive Minecraft mod integrity and threat analyzer.
-  ASCII-only source on purpose (safe on every console code page).
-
-  Examples:
-    .\OnyxModAnalyzer.ps1
-    .\OnyxModAnalyzer.ps1 -Path "D:\mods" -Depth Deep -Recurse
-    .\OnyxModAnalyzer.ps1 -Path "D:\mods" -NoPrompt -Offline     (exit code 0/1/2/3 = clean/review/suspicious/critical)
-#>
 [CmdletBinding()]
 param(
     [string]$Path,
