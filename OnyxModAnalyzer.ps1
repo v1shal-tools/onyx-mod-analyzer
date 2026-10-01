@@ -18,9 +18,7 @@ param(
 $ErrorActionPreference = 'SilentlyContinue'
 $Version = '2.2.0'
 
-# GitHub raw folder that holds templates/report.html (used only when the script is run without the repo files, e.g. via the one-line installer).
-# Replace YOUR-USERNAME after you create the repository, or set the ONYX_REPO_RAW environment variable.
-$RepoRaw = if ($env:ONYX_REPO_RAW) { $env:ONYX_REPO_RAW.TrimEnd('/') } else { 'https://raw.githubusercontent.com/YOUR-USERNAME/Onyx-Mod-Analyzer/main' }
+$RepoRaw = if ($env:ONYX_REPO_RAW) { $env:ONYX_REPO_RAW.TrimEnd('/') } else { 'https://raw.githubusercontent.com/v1shal-tools/Onyx-Mod-Analyzer/main' }
 if ($env:ONYX_ASCII) { $Ascii = [switch]$true }
 try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 Add-Type -AssemblyName System.IO.Compression
@@ -92,7 +90,6 @@ public static class OnyxNative {
     $Native = $true
 } catch {}
 
-# ---------------------------------------------------------------- detection rules
 $SevW = @{ critical = 40; high = 20; medium = 8; low = 3; info = 0 }
 $RuleList = New-Object System.Collections.Generic.List[object]
 
@@ -136,7 +133,7 @@ foreach ($x in $Cfg.ExtraTerms) {
         Add-Rule -Term ([string]$x.term) -Cat $ct -Sev $sv -Note 'Matched a rule from onyx.config.json'
     }
 }
-# bytecode API markers (exact constant-pool strings)
+
 Add-Rule -Term 'java/lang/ProcessBuilder' -Cat 'Process execution' -Sev 'medium' -Note 'Can launch external processes' -Kind 'exact'
 Add-Rule -Term 'java/net/URLClassLoader' -Cat 'Dynamic code loading' -Sev 'medium' -Note 'Loads classes from URLs or paths at runtime' -Kind 'exact'
 Add-Rule -Term 'java/lang/instrument/Instrumentation' -Cat 'Dynamic code loading' -Sev 'high' -Note 'Java agent / instrumentation API' -Kind 'exact'
@@ -147,7 +144,6 @@ foreach ($h in @('java/lang/Runtime','exec','defineClass','java/awt/Robot','mous
 }
 
 
-# ---- v2.2 additions: more cheat modules, client names, hook libraries, cheat domains
 Add-Terms @('AxeSpam','AnchorTweaks','AirAnchor','LegitTotem','StunSlam','AutoNethPot','AutoDtap','AutoPotRefill','SpearSwap','WebMacro','AnchorAction','LagReach') 'Combat cheat module' 'high' 'Module name typical of PvP cheats'
 Add-Terms @('NoBounce','Antiknockback','AutoWeb','KeyPearl','SelfDestruct','BaseFinder','StashFinder','TrailFinder','HideClient','LootYeeter') 'Combat / utility cheat module' 'medium' 'Module name common in cheat clients'
 Add-Terms @('AuthBypass','obfuscatedAuth') 'Cheat client marker' 'high' 'Licence / auth bypass marker used by cheat clients'
@@ -192,8 +188,7 @@ $TextExts = @('.json','.mf','.txt','.properties','.toml','.yml','.yaml','.cfg','
 $ScriptExts = @('.bat','.cmd','.ps1','.vbs','.vbe','.lnk','.scr','.msi')
 $NativeExts = @('.dll','.exe','.so','.dylib','.jnilib')
 
-# ---------------------------------------------------------------- console helpers
-# Source stays ASCII-only: every special glyph is built from a code point so any console code page is safe.
+
 $script:Wd = 78
 try { $ww = $Host.UI.RawUI.WindowSize.Width; if ($ww -gt 0) { $script:Wd = [Math]::Min(110, [Math]::Max(78, $ww - 1)) } } catch {}
 $script:UI = -not $Ascii
@@ -211,7 +206,6 @@ if ($script:UI) {
 $script:StCol = @{ VERIFIED = 'Green'; UNKNOWN = 'Yellow'; OBFUSCATED = 'Magenta'; REVIEW = 'DarkYellow'; SUSPICIOUS = 'Red'; CRITICAL = 'Red' }
 
 function W { param([string]$T = '', [string]$C = 'Gray') Write-Host $T -ForegroundColor $C }
-# WP: write one line made of coloured parts, each part is @('text','Color')
 function WP {
     param([object[]]$Parts)
     if ($Parts.Count -ge 1 -and $Parts[0] -is [string]) { $Parts = , $Parts }
